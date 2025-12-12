@@ -1,9 +1,10 @@
-// Tilanhallinta on määritelty tiedostossa App.jsx, josta tilanhallintaan tarvittavat arvot ja funktiot välitetään lapsikomponenteille propseina.
-// Ratkaisu toimii, mutta ei ole optimaalinen. Jos komponenttirakenne monimutkaistuu, tulee esim dispatcheria välittää propsien avulla monen komponentin kautta sitä tarvitseville komponenteille siitäkin huolimatta, että komponenttipuussa välissä olevat komponentit eivät dispatcheria tarvitsisikaan. Tästä ilmiöstä käytetään nimitystä prop drilling.
+// Context API on eräänlainan globaalin tilanhallinnan työkalu Reactissa. Sen avulla voidaan välttää prop drilling -ilmiötä, jossa tietoa (props) joudutaan välittämään monen komponentin kautta tarpeettomasti. Context API mahdollistaa tilan jakamisen suoraan komponenttien välillä ilman, että jokaisen välikomponentin tarvitsee tietää siitä mitään.
 
 import { useReducer } from "react";
+
 import Display from "./components/Display";
 import Button from "./components/Button";
+import CounterContext from "./CounterContext";
 
 // Reducer-funktio määrittelee, miten tila muuttuu eri action-tyyppien perusteella
 const counterReducer = (state, action) => {
@@ -23,15 +24,16 @@ const App = () => {
   // Käytetään Reactin useReducer hookkia paikalliseen tilanhallintaan
   const [counter, counterDispatch] = useReducer(counterReducer, 0); // Alkuarvo on 0
 
+  // Käytetään Context Provideria jakamaan counter ja counterDispatch alikomponenteille
   return (
-    <div>
-      <Display counter={counter} />
+    <CounterContext.Provider value={{ counter, counterDispatch }}>
+      <Display />
       <div>
-        <Button dispatch={counterDispatch} type="INC" label="+" />
-        <Button dispatch={counterDispatch} type="DEC" label="-" />
-        <Button dispatch={counterDispatch} type="ZERO" label="0" />
+        <Button type="INC" label="+" />
+        <Button type="DEC" label="-" />
+        <Button type="ZERO" label="0" />
       </div>
-    </div>
+    </CounterContext.Provider>
   );
 };
 
