@@ -1,6 +1,9 @@
-// Toteutetaan laskurin tilan hallinta Reactin sisäänrakennetun useReducer-hookin tarjoamalla Reduxin kaltaisella tilanhallintamekanismilla.
+// Tilanhallinta on määritelty tiedostossa App.jsx, josta tilanhallintaan tarvittavat arvot ja funktiot välitetään lapsikomponenteille propseina.
+// Ratkaisu toimii, mutta ei ole optimaalinen. Jos komponenttirakenne monimutkaistuu, tulee esim dispatcheria välittää propsien avulla monen komponentin kautta sitä tarvitseville komponenteille siitäkin huolimatta, että komponenttipuussa välissä olevat komponentit eivät dispatcheria tarvitsisikaan. Tästä ilmiöstä käytetään nimitystä prop drilling.
 
 import { useReducer } from "react";
+import Display from "./components/Display";
+import Button from "./components/Button";
 
 // Reducer-funktio määrittelee, miten tila muuttuu eri action-tyyppien perusteella
 const counterReducer = (state, action) => {
@@ -22,11 +25,11 @@ const App = () => {
 
   return (
     <div>
-      <div>{counter}</div>
+      <Display counter={counter} />
       <div>
-        <button onClick={() => counterDispatch({ type: "INC" })}>+</button>
-        <button onClick={() => counterDispatch({ type: "DEC" })}>-</button>
-        <button onClick={() => counterDispatch({ type: "ZERO" })}>0</button>
+        <Button dispatch={counterDispatch} type="INC" label="+" />
+        <Button dispatch={counterDispatch} type="DEC" label="-" />
+        <Button dispatch={counterDispatch} type="ZERO" label="0" />
       </div>
     </div>
   );
